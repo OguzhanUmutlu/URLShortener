@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Link Shortener</title>
+</head>
+<body>
+<label for="link">Link URL: </label><input type="text" value="" placeholder="Type URL there..." id="link"><br>
+<label for="isPrivate">Private link(only you): </label><input type="checkbox" id="isPrivate"><br>
+<label for="customName">Custom link: </label><input type="text" placeholder="Type custom link here or leave blank..."
+                                                    id="customName"><br>
+<label for="password">Link password: </label><input type="text" placeholder="Type link password here or leave blank..."
+                                                    id="password"><br>
+<label for="expireDate">Expires at: </label><input type="datetime-local" id="expireDate">, <label
+        for="checkExpire">Toggle expire date: </label><input type="checkbox" checked
+                                                             onclick="setTimeout(() => {let a = document.getElementById('checkExpire');document.getElementById('expireDate').disabled = !a.checked ? 'true' : undefined}, 20);"
+                                                             id="checkExpire"><br>
+<input type="button" value="Submit" onclick="submit();" id="submit"><br>
+<span id="texts"></span>
+<script>
+    function submit() {
+        const link = document.getElementById("link").value;
+        const isPrivate = document.getElementById("isPrivate").checked;
+        const customName = document.getElementById("customName").value;
+        const password = document.getElementById("password").value;
+        let expireDate = document.getElementById("expireDate");
+        expireDate = JSON.stringify(new Date(expireDate.value)) === "null" || expireDate.disabled || (new Date(expireDate.value)).getTime() < 0 ? -1 : (new Date(expireDate.value)).getTime();
+        const button = document.getElementById("submit");
+        button.disabled = "true";
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", "{DOMAIN}/api?action=addLink&link=" + encodeURI(link) + "&isPrivate=" + (isPrivate ? "true" : "false") + "&customName=" + encodeURI(customName) + "&password=" + encodeURI(password) + "&expireDate=" + encodeURI(expireDate), true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                let status = xhr.status;
+                if (status === 0 || (status >= 200 && status < 400)) {
+                    button.disabled = undefined;
+                    const res = JSON.parse(xhr.responseText);
+                    if (res.error) return alert(res.error);
+                    alert("Your URL has been shortened!")
+                    document.getElementById("texts").innerHTML += "<br>Shortened link: <a target='_blank' href='{DOMAIN}/l/" + res.cName + "'>{DOMAIN}/l/" + res.cName + "</a>";
+                } else {
+                    button.disabled = undefined;
+                    alert("URL should be valid!");
+                }
+            }
+        };
+        xhr.send();
+    }
+</script>
+</body>
+</html>
