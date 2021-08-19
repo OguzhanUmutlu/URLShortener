@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Link Shortener</title>
 </head>
@@ -27,7 +27,7 @@
         const button = document.getElementById("submit");
         button.disabled = "true";
         let xhr = new XMLHttpRequest();
-        xhr.open("GET", "{DOMAIN}/api?action=addLink&link=" + encodeURI(link) + "&isPrivate=" + (isPrivate ? "true" : "false") + "&customName=" + encodeURI(customName) + "&password=" + encodeURI(password) + "&expireDate=" + encodeURI(expireDate), true);
+        xhr.open("GET", "{DOMAIN}/api?action=addLink&link=" + encodeURI(link) + "&isPrivate=" + (isPrivate ? "true" : "false") + "&customName=" + encodeURI(customName) + "&password=" + encodeURI(password) + "&expireDate=" + encodeURI(expireDate.toString()), true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 let status = xhr.status;
